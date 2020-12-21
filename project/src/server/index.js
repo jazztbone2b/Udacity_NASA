@@ -18,8 +18,36 @@ app.use('/', express.static(path.join(__dirname, '../public')))
 app.get('/apod', async (req, res) => {
     try {
         let image = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}`)
-            .then(res => res.json())
-        res.send({ image })
+            .then(res => res.json());
+        res.send({ image });
+    } catch (err) {
+        console.log('error:', err);
+    }
+})
+
+app.get('/roverManifest/:rover_name', async (req, res) => {
+    const roverName = req.params.rover_name.toLowerCase();
+
+    try {
+        let data = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${roverName}?api_key=${process.env.API_KEY}`)
+            .then(res => res.json());
+        console.log({data});
+        res.send({ data });
+    } catch (err) {
+        console.log('error:', err);
+    }
+})
+
+// https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=YOUR_KEY
+app.get('/roverImages/:rover_name/:sol', async (req, res) => {
+    const roverName = req.params.rover_name.toLowerCase();
+    console.log(roverName);
+    const sol = req.params.sol;
+
+    try {
+        let data = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?sol=${sol}&api_key=${process.env.API_KEY}`)
+            .then(res => res.json());
+        res.send({ data });
     } catch (err) {
         console.log('error:', err);
     }
