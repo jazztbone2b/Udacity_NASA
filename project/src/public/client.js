@@ -13,11 +13,11 @@ const root = document.getElementById('root')
 
 const updateStore = (store, newState) => {
     store = Object.assign(store, newState)
-    render(root, store)
+    render(root, store);
 }
 
 const render = async (root, state) => {
-    root.innerHTML = App(state)
+    root.innerHTML = App(state);
 }
 
 
@@ -65,25 +65,30 @@ const App = (state) => {
 
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
-    render(root, store)
-})
+    render(root, store);
+});
 
-// ------------------------------------------------------  COMPONENTS
-
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-const Greeting = (name) => {
-    if (name) {
-        return `
-            <h1>Welcome, ${name}!</h1>
-        `
-    }
-
-    return `
-        <h1>Hello!</h1>
-    `
+//------------- HELPERS -------------
+const back = () => {
+    updateStore(store, { displayRoverData: false, currentRoverPhotos: null });
 }
 
-// Example of a pure function that renders infomation requested from the backend
+const showLoading = () => {
+    updateStore(store, { loading: true });
+}
+
+//------------- COMPONENTS -------------
+const Greeting = (name) => {
+    if (name) {
+        return (`
+            <h1>Welcome, ${name}!</h1>
+        `);
+    }
+
+    return (`
+        <h1>Hello!</h1>
+    `);
+}
 const ImageOfTheDay = (apod) => {
 
     // If image does not already exist, or it is not from today -- request it again
@@ -91,36 +96,35 @@ const ImageOfTheDay = (apod) => {
     const photodate = new Date(apod.date);
 
     if (!apod || apod.date === today.getDate() ) {
-        getImageOfTheDay(store)
+        getImageOfTheDay(store);
     }
 
-    // check if the photo of the day is actually type video!
-    if (apod.image.media_type === "video") {
-        return (`
-            <p>See today's featured video <a href="${apod.image.url}">here</a></p>
-            <p>${apod.image.title}</p>
-            <p>${apod.image.explanation}</p>
-        `)
-    } else {
-        return (`
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
-        `)
+    // only after getting the apod image of the day
+    if(apod.image) {
+        // check if the photo of the day is actually type video!
+        if (apod.image.media_type === "video") {
+            return (`
+                <p>See today's featured video <a href="${apod.image.url}">here</a></p>
+                <p>${apod.image.title}</p>
+                <p>${apod.image.explanation}</p>
+            `);
+        } else {
+            return (`
+                <img src="${apod.image.url}" height="350px" width="100%" />
+                <p>${apod.image.explanation}</p>
+            `);
+        }
     }
 }
 
 const generateRoverButtons = (rovers) => {
     return rovers.map(rover => {
-        return `
+        return (`
             <button onClick="showLoading(); getRoverManifest('${rover}')">
                 ${rover}
             </button>
-        `;
+        `);
     }).join('');
-}
-
-const back = () => {
-    updateStore(store, { displayRoverData: false, currentRoverPhotos: null });
 }
 
 const filterRoverPhotos = () => {
@@ -128,23 +132,22 @@ const filterRoverPhotos = () => {
         const photos = store.currentRoverPhotos.data.photos;
 
         return photos.map((item) => {
-            return `
+            return (`
             <img class="photo" src="${item.img_src}" alt="${item.earth_date}">
             <figcaption>${item.earth_date}</figcaption>
-        `
+        `);
         }).join('');
     } else {
-        return `
+        return (`
             <div>Loading photos...</div>
-        `;
+        `);
     }
 }
 
 const generateRoverData = () => {
     const rover = store.currentRoverManifest.data.photo_manifest;
 
-    // then generate the ui
-    const roverData = `
+    return (`
         <h2>${rover.name}</h2>
         <ul class="rover">
             <li>Status: ${rover.status}</li>
@@ -157,25 +160,16 @@ const generateRoverData = () => {
         </div>
 
         <button onClick="back()">Back</button>
-    `
-    return roverData;
+    `);
 }
 
-const showLoading = () => {
-    updateStore(store, { loading: true });
-}
-
-// ------------------------------------------------------  API CALLS
-
-// Example API call
+//------------- API CALLS -------------
 const getImageOfTheDay = (state) => {
     let { apod } = state
 
     fetch(`http://localhost:3000/apod`)
         .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
-
-    return data
+        .then(apod => updateStore(store, { apod }));
 }
 
 const getRoverImages = (name) => {
@@ -191,11 +185,7 @@ const getRoverImages = (name) => {
         });
 }
 
-// Mars Rovers: Curiosity, Opportunity, Spirt
-// example api url: 
-// https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=YOUR_KEY
 const getRoverManifest = (name) => {
-    // showLoading();
     let { currentRoverManifest, displayRoverData, loading } = store;
 
     fetch(`http://localhost:3000/roverManifest/${name}`)
