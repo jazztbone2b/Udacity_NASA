@@ -38,7 +38,6 @@ app.get('/roverManifest/:rover_name', async (req, res) => {
     }
 })
 
-// https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=YOUR_KEY
 app.get('/roverImages/:rover_name/:sol', async (req, res) => {
     const roverName = req.params.rover_name.toLowerCase();
     console.log(roverName);
