@@ -31,7 +31,6 @@ app.get('/roverManifest/:rover_name', async (req, res) => {
     try {
         let data = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${roverName}?api_key=${process.env.API_KEY}`)
             .then(res => res.json());
-        console.log({data});
         res.send({ data });
     } catch (err) {
         console.log('error:', err);
@@ -40,7 +39,6 @@ app.get('/roverManifest/:rover_name', async (req, res) => {
 
 app.get('/roverImages/:rover_name/:sol', async (req, res) => {
     const roverName = req.params.rover_name.toLowerCase();
-    console.log(roverName);
     const sol = req.params.sol;
 
     try {
