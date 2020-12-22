@@ -164,7 +164,7 @@ const getImageOfTheDay = () => {
 
 const getRoverImages = (name, manifest) => {
     // get the photos based on the max_sol
-    let sol = manifest.data.photo_manifest.max_sol;
+    const sol = manifest.data.photo_manifest.max_sol;
 
     fetch(`http://localhost:3000/roverImages/${name}/${sol}`)
         .then(res => res.json())
