@@ -35,7 +35,6 @@ const App = (state) => {
                     ${generateRoverButtons(state.get('rovers'))}
                 </div>
             </main>
-            <footer></footer>
         `);
     } else if (state.get('loading')) {
         return (`
